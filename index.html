@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lucky Draw</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <script src="confetti.js"></script>
+    <div class="confetti" id="confetti"></div>
+    <div class="float-container">
+        <!-- <h1 onclick="toggleNameList()">Lucky Draw</h1> -->
+
+        <div class="float-child">
+            <div class="">
+                <div class="">
+                    <h1>Current Prize</h1>
+                    <img id="slidesLeft" class="slide" src="" alt="Slide 1" style="height: 280px;width:auto">
+                    <div style="justify-content: center;flex-direction: column;">
+                        <h1 id="prize_desc">KrisPay Miles 10,200</h1>
+                        <div style="display:flex;justify-content: center;">
+                            <button onclick="previous()" style="width:100px">Previous</button>
+                            <button onclick="next()" style="width:100px">Next</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="float-child" style="display:flex;flex-direction: column;">
+            <h1 onclick="start()">Lucky Draw</h1>
+
+            <div class="roulette" id="roulette">
+                <div id="rouletteContent"></div>
+            </div>
+            </br>
+            <button onclick="drawWinner()" style="width:100%;margin:0px">Draw Winner</button>
+            </br>
+
+            <div id="inputwinner">
+                <input type="text" id="nameInput" placeholder="Enter name">
+                <button onclick="deleteName()">Remove Winner</button>
+                <input type="file" id="fileinput" stlye="" />
+            </div>
+        </div>
+
+
+
+        <button style="display:none" onclick="addRandomNames()">Add 500 Random Names</button>
+        <!-- </br><button onclick="drawWinner()" style="width:100%;margin:0px">Draw Winner</button> -->
+
+        <div id="nameList" style="display:none"></div>
+    </div>
+    <script>
+    </script>
+    <script src="common.js"></script>
+</body>
+
+</html>

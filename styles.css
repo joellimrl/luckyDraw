@@ -1,0 +1,207 @@
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    /* justify-content: center; */
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    position: relative;
+    background: url('background2.jpg') no-repeat center center fixed;
+    background-size: cover;
+    overflow: hidden;
+}
+
+.container {
+    text-align: center;
+    background: rgba(220, 220, 220, 1);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    position: relative;
+    z-index: 2;
+}
+
+input,
+button {
+    margin: 10px;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 10px;
+    border-color: rgba(0, 0, 0, 0.1);
+    position: relative;
+    z-index:2;
+}
+
+#nameList {
+    margin-top: 20px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.roulette {
+    margin-top: 8%;
+    height: 200px;
+    /* Increased height */
+    overflow: hidden;
+    position: relative;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.roulette div {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    line-height: 100px;
+    /* Adjusted line height */
+    text-align: center;
+    font-size: 50px;
+    /* Increased font size */
+    animation: spin 5s cubic-bezier(0.25, 0.1, 0.25, 1.0);
+}
+
+@keyframes spin {
+    0% {
+        top: 0;
+    }
+
+    100% {
+        top: -5000%;
+    }
+
+    /* Adjusted to scroll through all names */
+}
+
+input[type="file"] {
+    height: 43px;
+    border-radius: 10px;
+    border-color: rgba(0, 0, 0, 0.1)
+}
+
+input[type="file"]::-webkit-file-upload-button {
+    height: 43px;
+    border-radius: 10px;
+    border-color: rgba(0, 0, 0, 0.1)
+}
+
+/* Confetti effect */
+@keyframes confetti {
+    0% {
+        transform: translateY(0);
+    }
+
+    100% {
+        transform: translateY(100vh);
+    }
+}
+
+.confetti div {
+    position: absolute;
+    width: 15px;
+    height: 15px;
+    background: #ff0;
+    opacity: 0.8;
+    border-radius: 50%;
+    animation: confetti 3s infinite;
+}
+
+.confetti div:nth-child(odd) {
+    background: #f0f;
+    width: 12px;
+    height: 12px;
+}
+
+.confetti div:nth-child(2n) {
+    background: #0ff;
+    width: 8px;
+    height: 8px;
+}
+
+.confetti div:nth-child(3n) {
+    background: #f00;
+    width: 6px;
+    height: 6px;
+}
+
+.confetti div:nth-child(4n) {
+    background: #0f0;
+    width: 10px;
+    height: 10px;
+}
+
+.confetti div:nth-child(5n) {
+    background: #00f;
+    width: 14px;
+    height: 14px;
+}
+
+.slideshow-container {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 20px;
+    z-index: 1;
+}
+
+.slideshow-left,
+.slideshow-right {
+    width: 80%;
+    height: 80%;
+}
+
+.slide {
+    max-width: 70%;
+    height: auto;
+    animation: slideShow 10.0s infinite;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 70%;
+}
+
+@keyframes slideShow {
+    /* 0% {
+        opacity: 0;
+    }
+
+    75% {
+        opacity: 1;
+    }
+
+    25% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 0;
+    } */
+}
+
+.float-container {
+    padding: 20px;
+    margin-left:auto;
+    margin-right:auto;
+    width:90%;
+    display:flex;
+    text-align: center;
+    background: rgba(220, 220, 220, 0.8);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    z-index: 2;
+}
+
+.float-child {
+    width: 50%;
+    float: left;
+    padding: 20px;
+    
+}  
