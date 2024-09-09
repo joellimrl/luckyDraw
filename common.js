@@ -67,6 +67,28 @@ function showSlides() {
     slidesLeft[0].src = allImages[slideIndex - 1];
 }
 
+function setCookie(name,value,days) {
+    var expires = "";
+    if (days) {
+        var date = new Date();
+        date.setTime(date.getTime() + (days*24*60*60*1000));
+        expires = "; expires=" + date.toUTCString();
+    }
+    document.cookie = name + "=" + (value || "")  + expires + "; path=/";
+}
+function getCookie(name) {
+    var nameEQ = name + "=";
+    var ca = document.cookie.split(';');
+    for(var i=0;i < ca.length;i++) {
+        var c = ca[i];
+        while (c.charAt(0)==' ') c = c.substring(1,c.length);
+        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+    }
+    return null;
+}
+function eraseCookie(name) {   
+    document.cookie = name +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+}
 
 const names = [];
 const winners = [
@@ -75,9 +97,12 @@ const winners = [
     //     "name": ""
     // }
 ]; // load from localstorage immediately
+// const cookie = { names, winners };
 
-console.log(localStorage.getItem('participants'));
-console.log(localStorage.getItem('winners'));
+console.log(getCookie('participants'))
+console.log(getCookie('winners'))
+// console.log(localStorage.getItem('participants'));
+// console.log(localStorage.getItem('winners'));
 
 function readSingleFile(evt) {
     var f = evt.target.files[0];
@@ -93,8 +118,10 @@ function readSingleFile(evt) {
                 }
             }
             updateNameList();
-            localStorage.setItem('participants', JSON.stringify(names));
-            localStorage.setItem('winners', JSON.stringify(winners));
+            // localStorage.setItem('participants', JSON.stringify(names));
+            // localStorage.setItem('winners', JSON.stringify(winners));
+            setCookie('participants', JSON.stringify(names), 7);
+            setCookie('winners', JSON.stringify(winners), 7);
         }
         r.readAsText(f);
         // console.log(localStorage.getItem('participants'));
@@ -117,11 +144,14 @@ function deleteName(nameInput) { // used to remove winner after drawing
         const index = names.indexOf(name);
         if (index > -1) { // If the name is found
             winners.push({ item: allPrizeText[slideIndex], name: names[index] });
-            localStorage.setItem('winners', JSON.stringify(winners));
+            // localStorage.setItem('winners', JSON.stringify(winners));
+            setCookie('winners', JSON.stringify(winners), 7);
 
             names.splice(index, 1);
             updateNameList(); // Update the displayed name list
-            localStorage.setItem('participants', JSON.stringify(names))
+            // localStorage.setItem('participants', JSON.stringify(names))
+            setCookie('participants', JSON.stringify(names), 7);
+
             document.getElementById('nameInput').value = "";
         } else {
             alert('Name not found in the list!');
@@ -129,8 +159,10 @@ function deleteName(nameInput) { // used to remove winner after drawing
     } else {
         alert('Please enter a name to delete!');
     }
-    console.log(localStorage.getItem('participants'));
-    console.log(localStorage.getItem('winners'));
+    // console.log(localStorage.getItem('participants'));
+    // console.log(localStorage.getItem('winners'));
+    console.log(getCookie('participants'))
+    console.log(getCookie('winners'))
 }
 
 
@@ -190,6 +222,7 @@ function drawWinner() { // index.html
             win_effect.play()
             start();
         }, 8000); // Wait for the animation to complete
+        deleteName(names[winnerIndex])
     }, 100);
 }
 
