@@ -6,12 +6,12 @@ body {
     height: 100vh;
     margin: 0;
     position: relative;
-    background: url('background2.jpg') no-repeat center center fixed;
+    background: url('background.jpg') no-repeat center center fixed;
     background-size: cover;
     overflow: hidden;
 }
 
-.container {
+/* .container {
     text-align: center;
     background: rgba(220, 220, 220, 1);
     padding: 20px;
@@ -19,7 +19,7 @@ body {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     position: relative;
     z-index: 2;
-}
+} */
 
 input,
 button {
@@ -40,24 +40,30 @@ button {
 
 .roulette {
     margin-top: 8%;
-    height: 200px;
+    height: 150px;
     /* Increased height */
     overflow: hidden;
     position: relative;
-    border: 1px solid #ccc;
+    border: 2px solid #ccc;
     border-radius: 5px;
 }
 
-.roulette div {
+#rouletteContent {
     position: absolute;
     width: 100%;
-    height: 100%;
-    line-height: 100px;
-    /* Adjusted line height */
+    height: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+#rouletteContent p {
+    margin: 0;
     text-align: center;
-    font-size: 50px;
-    /* Increased font size */
-    animation: spin 5s cubic-bezier(0.25, 0.1, 0.25, 1.0);
+    font-size: 60px;
+    color: #333;
+    height: 150px; /* This should match itemHeight */
+    line-height: 150px; /* Align text vertically */
+    white-space: nowrap;
 }
 
 @keyframes spin {
@@ -200,8 +206,8 @@ input[type="file"]::-webkit-file-upload-button {
 }
 
 .float-child {
-    width: 50%;
-    float: left;
+    width: 30%;
+    /* float: left; */
     padding: 20px;
     
 }  

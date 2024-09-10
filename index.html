@@ -22,8 +22,8 @@
                     <div style="justify-content: center;flex-direction: column;">
                         <h1 id="prize_desc">#23 $20 Takashimaya Gift Voucher</h1>
                         <div style="display:flex;justify-content: center;">
-                            <button onclick="previous()" style="width:100px">Previous</button>
-                            <button onclick="next()" style="width:100px">Next</button>
+                            <button id="previousButton" onclick="previous()" style="width:100px">Previous</button>
+                            <button id="nextButton" onclick="next()" style="width:100px">Next</button>
                         </div>
                     </div>
                 </div>
@@ -31,16 +31,16 @@
         </div>
 
         <div class="float-child" style="display:flex;flex-direction: column;">
-            <h1 onclick="start()">Lucky Draw</h1>
+            <h1>Lucky Draw</h1>
 
             <div class="roulette" id="roulette">
                 <div id="rouletteContent"></div>
             </div>
             </br>
-            <button onclick="drawWinner()" style="width:100%;margin:0px">Draw Winner</button>
+            <button id="drawButton" onclick="drawWinner()" style="width:100%;margin:0px">Draw Winner</button>
             </br>
 
-            <div id="inputwinner">
+            <div>
                 <!-- <input type="text" id="nameInput" placeholder="Enter name">
                 <button onclick="deleteName()">Remove Winner</button> -->
                 <input type="file" id="fileinput" stlye="" />
@@ -48,13 +48,17 @@
         </div>
 
 
-        <button style="display:none" onclick="addRandomNames()">Add 500 Random Names</button>
+
+        <!-- <button style="display:none" onclick="addRandomNames()">Add 500 Random Names</button> -->
         <!-- </br><button onclick="drawWinner()" style="width:100%;margin:0px">Draw Winner</button> -->
 
-        <div id="nameList"></div>
+        <!-- <div id="nameList" style="display:none"></div> -->
+        <div class="float-child" style="display:flex;flex-direction: column;">
+            <h1>Winners</h1>
+            <div id="winnerList">
+            </div>
+        </div>
     </div>
-    <script>
-    </script>
     <script src="common.js"></script>
 </body>
 

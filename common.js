@@ -38,7 +38,7 @@ const allPrizeText = [
     "#16 $20 Takashimaya Gift Voucher",
     "#15 $20 Takashimaya Gift Voucher",
     "#14 $20 Takashimaya Gift Voucher",
-    "#13 $20 Takashimaya Gift Voucher",
+    "#13 Xiaomi Mi Wireless Power Bank (10000mAh)",
     "#12 Xiaomi Mi Wireless Power Bank (10000mAh)",
     "#11 Xiaomi Mi Wireless Power Bank (10000mAh)",
     "#10 Xiaomi Mi Wireless Power Bank (10000mAh)",
@@ -67,29 +67,6 @@ function showSlides() {
     slidesLeft[0].src = allImages[slideIndex - 1];
 }
 
-function setCookie(name,value,days) {
-    var expires = "";
-    if (days) {
-        var date = new Date();
-        date.setTime(date.getTime() + (days*24*60*60*1000));
-        expires = "; expires=" + date.toUTCString();
-    }
-    document.cookie = name + "=" + (value || "")  + expires + "; path=/";
-}
-function getCookie(name) {
-    var nameEQ = name + "=";
-    var ca = document.cookie.split(';');
-    for(var i=0;i < ca.length;i++) {
-        var c = ca[i];
-        while (c.charAt(0)==' ') c = c.substring(1,c.length);
-        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
-    }
-    return null;
-}
-function eraseCookie(name) {   
-    document.cookie = name +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-}
-
 const names = [];
 const winners = [
     // {
@@ -97,12 +74,12 @@ const winners = [
     //     "name": ""
     // }
 ]; // load from localstorage immediately
-// const cookie = { names, winners };
 
-console.log(getCookie('participants'))
-console.log(getCookie('winners'))
-// console.log(localStorage.getItem('participants'));
-// console.log(localStorage.getItem('winners'));
+const winnerList = document.getElementById('winnerList');
+const rouletteContent = document.getElementById('rouletteContent');
+const prevButton = document.getElementById('previousButton');
+const nextButton = document.getElementById('nextButton');
+const drawButton = document.getElementById('drawButton');
 
 function readSingleFile(evt) {
     var f = evt.target.files[0];
@@ -117,113 +94,80 @@ function readSingleFile(evt) {
                     names.push(lines[i].split(",").join("").trim());
                 }
             }
-            updateNameList();
-            // localStorage.setItem('participants', JSON.stringify(names));
-            // localStorage.setItem('winners', JSON.stringify(winners));
-            setCookie('participants', JSON.stringify(names), 7);
-            setCookie('winners', JSON.stringify(winners), 7);
         }
         r.readAsText(f);
-        // console.log(localStorage.getItem('participants'));
-    } else {
-        alert("Failed to load file");
     }
 }
 
-function updateNameList() {
-    const nameList = document.getElementById('nameList');
-    nameList.innerHTML = '<h3>Participants:</h3>' + names.map(name => `<p>${name}</p>`).join('');
+// function updateNameList() {
+//     const nameList = document.getElementById('nameList');
+//     nameList.innerHTML = '<h3>Participants:</h3>' + names.map(name => `<p>${name}</p>`).join('');
+// }
+
+function updateWinnerList() {
+    winnerList.innerHTML = winners.map(winner => `<p>${winner.item}: <b>${winner.name}</b></p>`).join('');
 }
 
 function deleteName(nameInput) { // used to remove winner after drawing
-    // const nameInput = document.getElementById('nameInput');
-    const name = nameInput.value.trim(); // Get the input value and trim any extra spaces
-
-    if (name) {
-        // Find the index of the name in the names array
-        const index = names.indexOf(name);
-        if (index > -1) { // If the name is found
-            winners.push({ item: allPrizeText[slideIndex], name: names[index] });
-            // localStorage.setItem('winners', JSON.stringify(winners));
-            setCookie('winners', JSON.stringify(winners), 7);
-
-            names.splice(index, 1);
-            updateNameList(); // Update the displayed name list
-            // localStorage.setItem('participants', JSON.stringify(names))
-            setCookie('participants', JSON.stringify(names), 7);
-
-            document.getElementById('nameInput').value = "";
-        } else {
-            alert('Name not found in the list!');
-        }
-    } else {
-        alert('Please enter a name to delete!');
+    const name = nameInput.trim();
+    const index = names.indexOf(name);
+    if (index > -1) { // If the name is found
+        names.splice(index, 1);
     }
-    // console.log(localStorage.getItem('participants'));
-    // console.log(localStorage.getItem('winners'));
-    console.log(getCookie('participants'))
-    console.log(getCookie('winners'))
 }
 
-
-var play_effect;
-var win_effect;
-let prevPosition = 0;
 function drawWinner() { // index.html
     confetti.stop() // confetti.js
-    stop();
-    if (play_effect) {
-        play_effect.pause()
-    }
-    play_effect = null;
-    if (win_effect) {
-        win_effect.pause()
-    }
-    win_effect = null;
+    // stop();
     if (names.length === 0) {
         alert('No participants to draw from!');
         return;
     }
 
-    play_effect = new Audio('scrolling_effect.mp3')
-    play_effect.play()
+    // disable buttons while spinning
+    prevButton.disabled = true;
+    nextButton.disabled = true;
+    drawButton.disabled = true;
 
-    const rouletteContent = document.getElementById('rouletteContent');
-    rouletteContent.innerHTML = names.concat(
-        names, names, names, names, names,
-        names, names, names, names, names,
-        names, names, names, names, names,
-        names, names, names, names, names,
+    const itemHeight = 150; // Adjust based on the height of each name item
+    const totalHeight = names.length * itemHeight;
+
+    rouletteContent.innerHTML = names.concat( // concat x6 to simulate endless scroll
         names, names, names, names, names
-    ).map(name => `<p>${name}</p>`).join('');
-    rouletteContent.style.top = '0';
-    rouletteContent.style.animation = 'none';
-    
-    let finalPosition = 0;
+    ).map(name => `<p style="font-size:${name.length > 18 ? 60 - name.length : 50}px">${name}</p>`).join('');
+    const spinDuration = 4; // Duration of the spin animation in seconds
+
+    // Randomly select a stopping index
+    const randomIndex = Math.floor(Math.random() * names.length);
+    const randomOffset = randomIndex * itemHeight;
+
+    // Total height to ensure the picker scrolls through the full list
+    const randomHeight = Math.floor(Math.random() * 6); // randomize which name list to use as its concated 6 times
+    const totalScrollHeight = (totalHeight * randomHeight) + randomOffset;
+    console.log('🚀 ~ drawWinner ~ totalScrollHeight:', totalScrollHeight);
+
+    // Set the transition and scroll the picker
+    rouletteContent.style.transition = `transform ${spinDuration}s cubic-bezier(0.25, 0.1, 0.25, 1.0)`;
+    rouletteContent.style.transform = `translateY(-${totalScrollHeight}px)`;
+
+    // Calculate and display the final name after the scrolling ends
     setTimeout(() => {
-        const totalNames = names.length * 25; // Total number of names in the repeated list
-        const winnerIndex = Math.floor(Math.random() * names.length);
-        const offset = winnerIndex * 150; // 100px is the height of each name in the roulette
-        do {
-            finalPosition = offset + (Math.floor(Math.random() * names.length) * 150); // Randomize the final position within the repeated list
-            //alert("finalPosition"+finalPosition)
-            //alert("prevPosition"+prevPosition)
-            //alert(finalPosition-prevPosition)
-            } while (Math.abs(finalPosition - prevPosition)< 10000);
-        //} while (false);
+        // Calculate the final visible index
+        const finalIndex = Math.floor(totalScrollHeight / itemHeight) % names.length;
+        console.log(`Selected Name: ${names[finalIndex]}`);
+        winners.push({ item: allPrizeText[slideIndex - 1], name: names[finalIndex]})
 
-        rouletteContent.style.transition = 'top 8s cubic-bezier(0.25, 0.1, 0.25, 1.0)';
-        rouletteContent.style.top = `-${finalPosition}px`;
+        // update and delete name from list
+        updateWinnerList();
+        deleteName(names[finalIndex]);
 
-        prevPosition = finalPosition;
+        next(); // go to next item
 
-        setTimeout(() => {
-            win_effect = new Audio('winner_effect.mp3')
-            win_effect.play()
-            start();
-        }, 8000); // Wait for the animation to complete
-        deleteName(names[winnerIndex])
-    }, 100);
+        // re-enable buttons
+        prevButton.disabled = false;
+        nextButton.disabled = false;
+        drawButton.disabled = false;
+    }, spinDuration * 1000);
 }
 
 // Function to create and append confetti elements
@@ -243,32 +187,32 @@ function createConfetti() {
 
 createConfetti(); // Initialize confetti effect
 
-function toggleNameList() {
-    const nameList = document.getElementById('nameList');
-    if (nameList.style.display === 'none') {
-        nameList.style.display = 'block';
-    } else {
-        nameList.style.display = 'none';
-    }
-}
+// function toggleNameList() {
+//     const nameList = document.getElementById('nameList');
+//     if (nameList.style.display === 'none') {
+//         nameList.style.display = 'block';
+//     } else {
+//         nameList.style.display = 'none';
+//     }
+// }
 
-const start = () => {
-    //setTimeout(function() {
-    const confettiContainer = document.getElementById('confetti');
-    confettiContainer.style.display = "none";
-    confetti.start()
-    setTimeout(function () {
-        stop();
-    }, 10000);
-};
+// const start = () => {
+//     //setTimeout(function() {
+//     const confettiContainer = document.getElementById('confetti');
+//     confettiContainer.style.display = "none";
+//     confetti.start()
+//     setTimeout(function () {
+//         stop();
+//     }, 10000);
+// };
 
-const stop = () => {
-    setTimeout(function () {
-        const confettiContainer = document.getElementById('confetti');
-        confettiContainer.style.display = "block";
-        confetti.stop()
-    }, 5000); // 5000 is time that after 5 second stop the confetti ( 5000 = 5 sec)
-};
+// const stop = () => {
+//     setTimeout(function () {
+//         const confettiContainer = document.getElementById('confetti');
+//         confettiContainer.style.display = "block";
+//         confetti.stop()
+//     }, 5000); // 5000 is time that after 5 second stop the confetti ( 5000 = 5 sec)
+// };
 
 document.getElementById('fileinput').addEventListener('change', readSingleFile);
 
