@@ -1,6 +1,5 @@
 let slideIndex = 0;
 
-const totalSlides = 23;
 const allImages = [
     "image/takashimaya.png", //23
     "image/takashimaya.png", //22
@@ -28,58 +27,45 @@ const allImages = [
 ];
 
 const allPrizeText = [
-    "#23 $20 Takashimaya Gift Voucher",
-    "#22 $20 Takashimaya Gift Voucher",
-    "#21 $20 Takashimaya Gift Voucher",
-    "#20 $20 Takashimaya Gift Voucher",
-    "#19 $20 Takashimaya Gift Voucher",
-    "#18 $20 Takashimaya Gift Voucher",
-    "#17 $20 Takashimaya Gift Voucher",
-    "#16 $20 Takashimaya Gift Voucher",
-    "#15 $20 Takashimaya Gift Voucher",
-    "#14 $20 Takashimaya Gift Voucher",
-    "#13 Xiaomi Mi Wireless Power Bank (10000mAh)",
-    "#12 Xiaomi Mi Wireless Power Bank (10000mAh)",
-    "#11 Xiaomi Mi Wireless Power Bank (10000mAh)",
-    "#10 Xiaomi Mi Wireless Power Bank (10000mAh)",
-    "#9 Xiaomi Mi Wireless Power Bank (10000mAh)",
-    "#8 Xiaomi Mi Wireless Power Bank (10000mAh)",
-    "#7 Xiaomi Mi Wireless Power Bank (10000mAh)",
-    "#6 Xiaomi Mi Wireless Power Bank (10000mAh)",
-    "#5 Xiaomi Mi Wireless Power Bank (10000mAh)",
-    "#4 Xiaomi Mi Wireless Power Bank (10000mAh)",
-    "#3 Nespresso Essenza Mini Pure White",
-    "#2 DJI Osmo Action 4 Standard",
-    "#1 Dyson Supersonic™ Hair Dryer"
+    "$20 Takashimaya Gift Voucher",
+    "$20 Takashimaya Gift Voucher",
+    "$20 Takashimaya Gift Voucher",
+    "$20 Takashimaya Gift Voucher",
+    "$20 Takashimaya Gift Voucher",
+    "$20 Takashimaya Gift Voucher",
+    "$20 Takashimaya Gift Voucher",
+    "$20 Takashimaya Gift Voucher",
+    "$20 Takashimaya Gift Voucher",
+    "$20 Takashimaya Gift Voucher",
+    "Xiaomi Mi Wireless Power Bank",
+    "Xiaomi Mi Wireless Power Bank",
+    "Xiaomi Mi Wireless Power Bank",
+    "Xiaomi Mi Wireless Power Bank",
+    "Xiaomi Mi Wireless Power Bank",
+    "Xiaomi Mi Wireless Power Bank",
+    "Xiaomi Mi Wireless Power Bank",
+    "Xiaomi Mi Wireless Power Bank",
+    "Xiaomi Mi Wireless Power Bank",
+    "Xiaomi Mi Wireless Power Bank",
+    "Nespresso Essenza Mini Pure White",
+    "DJI Osmo Action 4 Standard",
+    "Dyson Supersonic™ Hair Dryer"
 ];
 
-showSlides();
-
-function showSlides() {
-    let slidesLeft = document.querySelectorAll('.slide');
-
-    slideIndex++;
-
-    if (slideIndex > totalSlides) {
-        slideIndex = 1;
-    }
-    slidesLeft[0].style.display = 'block';
-    slidesLeft[0].src = allImages[slideIndex - 1];
-}
-
+const totalSlides = allPrizeText.length;
 const names = [];
-const winners = [
-    // {
-    //     "item": "",
-    //     "name": ""
-    // }
-]; // load from localstorage immediately
+const winners = [];
 
+const prizeHeader = document.getElementById('prizeHeader');
 const winnerList = document.getElementById('winnerList');
 const rouletteContent = document.getElementById('rouletteContent');
 const prevButton = document.getElementById('previousButton');
 const nextButton = document.getElementById('nextButton');
 const drawButton = document.getElementById('drawButton');
+const slides = document.getElementById('slides');
+const prizeDesc = document.getElementById('prize_desc');
+const confettiContainer = document.getElementById('confetti');
+const fileInput = document.getElementById('fileinput');
 
 function readSingleFile(evt) {
     var f = evt.target.files[0];
@@ -94,18 +80,20 @@ function readSingleFile(evt) {
                     names.push(lines[i].split(",").join("").trim());
                 }
             }
+            rouletteContent.innerHTML = `<p style="font-size:50px">${names[0]}</p>`; // show first name
         }
         r.readAsText(f);
     }
 }
 
-// function updateNameList() {
-//     const nameList = document.getElementById('nameList');
-//     nameList.innerHTML = '<h3>Participants:</h3>' + names.map(name => `<p>${name}</p>`).join('');
-// }
+fileInput.addEventListener('change', readSingleFile);
 
 function updateWinnerList() {
-    winnerList.innerHTML = winners.map(winner => `<p>${winner.item}: <b>${winner.name}</b></p>`).join('');
+    let winnerDisplay = winners;
+    if (winners.length > 15) {
+        winnerDisplay = winners.slice(winners.length - 15);
+    }
+    winnerList.innerHTML = `<table><tr><th>#</th><th>Prize</th><th>Name</th></tr>${winnerDisplay.map(winner => `<tr><td>${winner.index}</td><td>${winner.item}</td><td><b>${winner.name}</b></td></tr>`).join('')}</table>`;
 }
 
 function deleteName(nameInput) { // used to remove winner after drawing
@@ -116,9 +104,9 @@ function deleteName(nameInput) { // used to remove winner after drawing
     }
 }
 
-function drawWinner() { // index.html
-    confetti.stop() // confetti.js
-    // stop();
+let prevHeight = null;
+function drawWinner() { // draw winner button
+    confetti.stop() // stop confetti from prev draw
     if (names.length === 0) {
         alert('No participants to draw from!');
         return;
@@ -128,6 +116,8 @@ function drawWinner() { // index.html
     prevButton.disabled = true;
     nextButton.disabled = true;
     drawButton.disabled = true;
+    // fileInput.disabled = true; // disable changing file after spinning
+    fileInput.style = "display:none";
 
     const itemHeight = 150; // Adjust based on the height of each name item
     const totalHeight = names.length * itemHeight;
@@ -139,12 +129,15 @@ function drawWinner() { // index.html
 
     // Randomly select a stopping index
     const randomIndex = Math.floor(Math.random() * names.length);
-    const randomOffset = randomIndex * itemHeight;
+    const randomOffset = randomIndex * itemHeight; // This selects the actual name
 
     // Total height to ensure the picker scrolls through the full list
-    const randomHeight = Math.floor(Math.random() * 6); // randomize which name list to use as its concated 6 times
+    let randomHeight = Math.floor(Math.random() * 6); // randomize which name list to use as its concated 6 times, affects rotations
+    if (prevHeight && randomHeight === prevHeight) { // ensure the rotation will go through at least 1 full name list
+        randomHeight = Math.abs(randomHeight - 3);
+    }
     const totalScrollHeight = (totalHeight * randomHeight) + randomOffset;
-    console.log('🚀 ~ drawWinner ~ totalScrollHeight:', totalScrollHeight);
+    prevHeight = randomHeight; // store prev height so the rotation will go through at least 1 full name list
 
     // Set the transition and scroll the picker
     rouletteContent.style.transition = `transform ${spinDuration}s cubic-bezier(0.25, 0.1, 0.25, 1.0)`;
@@ -152,16 +145,22 @@ function drawWinner() { // index.html
 
     // Calculate and display the final name after the scrolling ends
     setTimeout(() => {
+        // Display winner confetti
+        confettiContainer.style.display = "none";
+        confetti.start();
+        setTimeout(function () {
+            confettiContainer.style.display = "block";
+            confetti.stop()
+        }, 5000);
+
         // Calculate the final visible index
         const finalIndex = Math.floor(totalScrollHeight / itemHeight) % names.length;
         console.log(`Selected Name: ${names[finalIndex]}`);
-        winners.push({ item: allPrizeText[slideIndex - 1], name: names[finalIndex]})
+        winners.push({ index: totalSlides - slideIndex + 1, item: allPrizeText[slideIndex - 1], name: names[finalIndex]})
 
         // update and delete name from list
         updateWinnerList();
         deleteName(names[finalIndex]);
-
-        next(); // go to next item
 
         // re-enable buttons
         prevButton.disabled = false;
@@ -170,9 +169,44 @@ function drawWinner() { // index.html
     }, spinDuration * 1000);
 }
 
+function previous() { // prev prize button
+    slideIndex--;
+    if (slideIndex < 1) {
+        slideIndex = totalSlides;
+    }
+    slides.src = allImages[slideIndex - 1];
+    prizeDesc.innerHTML = allPrizeText[slideIndex - 1];
+    prizeHeader.innerHTML = `Prize #${totalSlides - slideIndex + 1}`;
+}
+
+function next() { // next prize button
+    slideIndex++;
+    if (slideIndex > totalSlides) {
+        slideIndex = 1;
+    }
+    slides.src = allImages[slideIndex - 1];
+    prizeDesc.innerHTML = allPrizeText[slideIndex - 1];
+    prizeHeader.innerHTML = `Prize #${totalSlides - slideIndex + 1}`;
+}
+
+function initPrizeList() {
+    let slides = document.querySelectorAll('.slide');
+
+    slideIndex++;
+
+    if (slideIndex > totalSlides) {
+        slideIndex = 1;
+    }
+    slides[0].style.display = 'block';
+    slides[0].src = allImages[slideIndex - 1];
+    
+    slides.src = allImages[slideIndex - 1];
+    prizeDesc.innerHTML = allPrizeText[slideIndex - 1];
+    prizeHeader.innerHTML = `Prize #${totalSlides - slideIndex + 1}`;
+}
+
 // Function to create and append confetti elements
 function createConfetti() {
-    const confettiContainer = document.getElementById('confetti');
     const numConfetti = 100; // Number of confetti pieces
 
     for (let i = 0; i < numConfetti; i++) {
@@ -185,52 +219,6 @@ function createConfetti() {
     }
 }
 
+initPrizeList(); // init prizes
 createConfetti(); // Initialize confetti effect
-
-// function toggleNameList() {
-//     const nameList = document.getElementById('nameList');
-//     if (nameList.style.display === 'none') {
-//         nameList.style.display = 'block';
-//     } else {
-//         nameList.style.display = 'none';
-//     }
-// }
-
-// const start = () => {
-//     //setTimeout(function() {
-//     const confettiContainer = document.getElementById('confetti');
-//     confettiContainer.style.display = "none";
-//     confetti.start()
-//     setTimeout(function () {
-//         stop();
-//     }, 10000);
-// };
-
-// const stop = () => {
-//     setTimeout(function () {
-//         const confettiContainer = document.getElementById('confetti');
-//         confettiContainer.style.display = "block";
-//         confetti.stop()
-//     }, 5000); // 5000 is time that after 5 second stop the confetti ( 5000 = 5 sec)
-// };
-
-document.getElementById('fileinput').addEventListener('change', readSingleFile);
-
-function previous() { // prev prize button
-    slideIndex--;
-    if (slideIndex < 1) {
-        slideIndex = totalSlides;
-    }
-    document.getElementById('slidesLeft').src = allImages[slideIndex - 1];
-    document.getElementById('prize_desc').innerHTML = allPrizeText[slideIndex - 1];
-}
-
-function next() { // next prize button
-    slideIndex++;
-    if (slideIndex > totalSlides) {
-        slideIndex = 1;
-    }
-    document.getElementById('slidesLeft').src = allImages[slideIndex - 1];
-    document.getElementById('prize_desc').innerHTML = allPrizeText[slideIndex - 1];
-
-}
+updateWinnerList() // show table headers

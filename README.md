@@ -2,11 +2,8 @@
 
 ## Todos
 
-- Move Prize # to top 
-- Format winner list with columns
-- Winner list too long, need to push up earlier prizes
-- Disable next/prev/draw buttons when spinning
-- Auto go next after spinning
+- Extract JSON file of names/winners, can be accepted as input also?
+- display button to extract winners, only after extracted then the file input will reappear
 
 Remove background, items in common.js to be moved to external file
 

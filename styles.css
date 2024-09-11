@@ -66,16 +66,8 @@ button {
     white-space: nowrap;
 }
 
-@keyframes spin {
-    0% {
-        top: 0;
-    }
-
-    100% {
-        top: -5000%;
-    }
-
-    /* Adjusted to scroll through all names */
+table {
+    width: 100%;
 }
 
 input[type="file"] {
