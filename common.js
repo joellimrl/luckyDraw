@@ -104,7 +104,7 @@ function deleteName(nameInput) { // used to remove winner after drawing
     }
 }
 
-let prevHeight = null;
+let prevHeight = 0;
 function drawWinner() { // draw winner button
     confetti.stop() // stop confetti from prev draw
     if (names.length === 0) {
