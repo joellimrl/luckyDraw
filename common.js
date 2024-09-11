@@ -47,7 +47,7 @@ const allPrizeText = [
     "Xiaomi Mi Wireless Power Bank",
     "Xiaomi Mi Wireless Power Bank",
     "Xiaomi Mi Wireless Power Bank",
-    "Nespresso Essenza Mini Pure White",
+    "Nespresso Essenza Mini",
     "DJI Osmo Action 4 Standard",
     "Dyson Supersonic™ Hair Dryer"
 ];
@@ -169,14 +169,21 @@ function drawWinner() { // draw winner button
     }, spinDuration * 1000);
 }
 
+function updateHtml() {
+    slides.src = allImages[slideIndex - 1];
+    slides.classList.remove('slide'); // retrigger animation
+    void slides.offsetWidth;
+    slides.classList.add('slide');
+    prizeDesc.innerHTML = allPrizeText[slideIndex - 1];
+    prizeHeader.innerHTML = `Prize #${totalSlides - slideIndex + 1}`;
+}
+
 function previous() { // prev prize button
     slideIndex--;
     if (slideIndex < 1) {
         slideIndex = totalSlides;
     }
-    slides.src = allImages[slideIndex - 1];
-    prizeDesc.innerHTML = allPrizeText[slideIndex - 1];
-    prizeHeader.innerHTML = `Prize #${totalSlides - slideIndex + 1}`;
+    updateHtml();
 }
 
 function next() { // next prize button
@@ -184,25 +191,7 @@ function next() { // next prize button
     if (slideIndex > totalSlides) {
         slideIndex = 1;
     }
-    slides.src = allImages[slideIndex - 1];
-    prizeDesc.innerHTML = allPrizeText[slideIndex - 1];
-    prizeHeader.innerHTML = `Prize #${totalSlides - slideIndex + 1}`;
-}
-
-function initPrizeList() {
-    let slides = document.querySelectorAll('.slide');
-
-    slideIndex++;
-
-    if (slideIndex > totalSlides) {
-        slideIndex = 1;
-    }
-    slides[0].style.display = 'block';
-    slides[0].src = allImages[slideIndex - 1];
-    
-    slides.src = allImages[slideIndex - 1];
-    prizeDesc.innerHTML = allPrizeText[slideIndex - 1];
-    prizeHeader.innerHTML = `Prize #${totalSlides - slideIndex + 1}`;
+    updateHtml();
 }
 
 // Function to create and append confetti elements
@@ -219,6 +208,5 @@ function createConfetti() {
     }
 }
 
-initPrizeList(); // init prizes
+next(); // init prize list
 createConfetti(); // Initialize confetti effect
-updateWinnerList() // show table headers
