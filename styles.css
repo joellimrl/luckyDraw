@@ -163,5 +163,17 @@ input[type="file"]::-webkit-file-upload-button {
     width: 30%;
     /* float: left; */
     padding: 20px;
-    
 }  
+
+.buttonContainer {
+    bottom: 0px;
+    margin: 0px;
+    width: 100%;
+    justify-content: center;
+    display: flex;
+    align-items: flex-end;
+}
+
+#winnerList {
+    height: 100%;
+}

@@ -66,27 +66,68 @@ const slides = document.getElementById('slides');
 const prizeDesc = document.getElementById('prize_desc');
 const confettiContainer = document.getElementById('confetti');
 const fileInput = document.getElementById('fileinput');
+const downloadButton = document.getElementById('downloadButton');
 
 function readSingleFile(evt) {
     var f = evt.target.files[0];
     if (f) {
-        var r = new FileReader();
-        r.onload = function (e) {
-            var contents = e.target.result;
-
-            var lines = contents.split("\n");
-            for (var i = 0; i < lines.length; i++) {
-                if (lines[i].split(",").join("").trim() !== "") {
-                    names.push(lines[i].split(",").join("").trim());
+        const fileName = f.name;
+        const fileExtension = fileName.split('.').pop().toLowerCase();
+        const r = new FileReader();
+        if (fileExtension === 'csv') {
+            r.onload = function (e) {
+                var contents = e.target.result;
+    
+                var lines = contents.split("\n");
+                for (var i = 0; i < lines.length; i++) {
+                    if (lines[i].split(",").join("").trim() !== "") {
+                        names.push(lines[i].split(",").join("").trim());
+                    }
                 }
+                rouletteContent.innerHTML = `<p style="font-size:50px">${names[0]}</p>`; // show first name
             }
-            rouletteContent.innerHTML = `<p style="font-size:50px">${names[0]}</p>`; // show first name
+            r.readAsText(f);
+        } else if (fileExtension === 'json') {
+            r.onload = function (e) {
+                var contents = e.target.result;
+                var data = JSON.parse(contents);
+                if (Array.isArray(data.names)) {
+                    names.push(...data.names);
+                    winners.push(...data.winners);
+                    rouletteContent.innerHTML = `<p style="font-size:50px">${names[0]}</p>`; // show first name
+                    updateWinnerList();
+                } else {
+                    alert('Invalid JSON format: "names" should be an array.');
+                }
+            };
+            r.readAsText(f);
+        } else {
+            alert('Please upload a CSV or JSON file.');
+            return;
         }
-        r.readAsText(f);
     }
 }
 
 fileInput.addEventListener('change', readSingleFile);
+
+function downloadOutput() {
+    const data = {
+        names: names,
+        winners: winners
+    };
+
+    const json = JSON.stringify(data, null, 2);
+    const blob = new Blob([json], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'output.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
 
 function updateWinnerList() {
     let winnerDisplay = winners;
@@ -94,6 +135,7 @@ function updateWinnerList() {
         winnerDisplay = winners.slice(winners.length - 15);
     }
     winnerList.innerHTML = `<table><tr><th>#</th><th>Prize</th><th>Name</th></tr>${winnerDisplay.map(winner => `<tr><td>${winner.index}</td><td>${winner.item}</td><td><b>${winner.name}</b></td></tr>`).join('')}</table>`;
+    downloadButton.disabled = winners.length > 0 ? false : true;
 }
 
 function deleteName(nameInput) { // used to remove winner after drawing

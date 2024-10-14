@@ -1,6 +1,6 @@
 # Lucky draw static web page
 
-# How to
+## How to use
 
 Update the following with the relevant information:
 
